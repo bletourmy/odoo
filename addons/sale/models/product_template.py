@@ -71,7 +71,7 @@ class ProductTemplate(models.Model):
         if target_company:  # don't prevent writing `False`, should always work
             product_data = self.env['product.product'].sudo().with_context(active_test=False).search_read([('product_tmpl_id', 'in', self.ids)], fields=['id'])
             product_ids = list(map(lambda p: p['id'], product_data))
-            so_lines = self.env['sale.order.line'].sudo().search_read([('product_id', 'in', product_ids), ('company_id', '!=', target_company.id)], fields=['id', 'product_id'])
+            so_lines = self.env['sale.order.line'].sudo().search_read([('product_id', 'in', product_ids), ('company_id', 'not in', target_company.ids)], fields=['id', 'product_id'])
             used_products = list(map(lambda sol: sol['product_id'][1], so_lines))
             if so_lines:
                 raise ValidationError(_('The following products cannot be restricted to the company'
